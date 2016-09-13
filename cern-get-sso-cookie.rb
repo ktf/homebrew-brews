@@ -1,4 +1,4 @@
-class GetCERNSSOCookie < Formula
+class CernGetSsoCookie < Formula
   desc "Tool to get authentication cookie from CERN SSO"
   homepage ""
   head "https://github.com/ktf/cern-get-sso-cookie.git", :using => :git
