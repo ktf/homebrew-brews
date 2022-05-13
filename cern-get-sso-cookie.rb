@@ -3,6 +3,7 @@ class CernGetSsoCookie < Formula
   homepage ""
   url "https://github.com/ktf/cern-get-sso-cookie.git", :using => :git
   head "https://github.com/ktf/cern-get-sso-cookie.git", :using => :git
+  version "1.0"
 
   def install
     system "mkdir -p #{prefix}"
