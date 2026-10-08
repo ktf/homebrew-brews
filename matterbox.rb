@@ -6,8 +6,8 @@ class Matterbox < Formula
 
   depends_on "go" => :build
   depends_on "pkgconf" => :build
-  # go-astiav v0.41 binds the ffmpeg 8 API and does not compile against 9.
-  depends_on "ffmpeg@8"
+  # go-astiav v0.43 binds the ffmpeg 9 API.
+  depends_on "ffmpeg"
 
   on_linux do
     depends_on "alsa-lib"
@@ -15,7 +15,6 @@ class Matterbox < Formula
 
   def install
     ENV["CGO_ENABLED"] = "1"
-    ENV.prepend_path "PKG_CONFIG_PATH", Formula["ffmpeg@8"].opt_lib/"pkgconfig"
     ldflags = "-s -w -X matterbox/internal/cli.version=#{version}"
     system "go", "build", *std_go_args(ldflags: ldflags, tags: "demoaudio,video")
     generate_completions_from_executable(bin/"matterbox", "completion")
