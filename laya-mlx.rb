@@ -94,8 +94,20 @@ class LayaMlx < Formula
   end
 
   def install
+    # Same workarounds as homebrew-core's rapid-mlx and hf formulae.
+    # superenv drops the -O0 that aws-lc-sys needs for its jitter RNG.
+    ENV["AWS_LC_SYS_NO_JITTER_ENTROPY"] = "1"
+    # tokenizers and hf-xet build PyO3 extensions through maturin.
+    ENV.append_to_rustflags "-C link-arg=-Wl,-undefined,dynamic_lookup"
+
     venv = virtualenv_create(libexec, "python3.14")
-    venv.pip_install resources
+    venv.pip_install resources.reject { |r| r.name == "hf-xet" }
+    resource("hf-xet").stage do
+      # native-tls avoids building the bundled aws-lc under superenv.
+      inreplace %w[xet_client/Cargo.toml xet_data/Cargo.toml xet_pkg/Cargo.toml],
+                'default = ["rustls-tls"]', 'default = ["native-tls"]'
+      venv.pip_install Pathname.pwd
+    end
     venv.pip_install buildpath
     # laya-snake needs the demo extras, so only the main CLI is linked.
     bin.install_symlink libexec/"bin/laya-mlx"
